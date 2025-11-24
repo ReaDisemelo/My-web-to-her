@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For My Love ❤️</title>
+  <style>
+    :root{
+      --bg:#fff5f8;
+      --accent:#88389c;
+      --primary:#b84dff;
+      --accent:#88389c;
+      --dark:#2b2b2b;
+      --light:#ffffff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--dark); background: var(--bg);
+      line-height:1.6;
+    }
+    a{color:var(--primary); text-decoration:none}
+    header{
+      position:relative; overflow:hidden; background: linear-gradient(135deg, #ffe1ea, #fff5f8);
+      padding: 80px 20px; text-align:center;
+    }
+    .hero-title{
+      font-size: clamp(28px, 6vw, 56px);
+      margin:0 0 10px; color: var(--primary); letter-spacing:0.5px;
+    }
+    .hero-sub{font-size: clamp(16px, 3.5vw, 22px); margin:0 0 24px;}
+    .btn{
+      display:inline-block; padding:12px 20px; border-radius:999px; background: var(--primary);
+      color:#fff; font-weight:600; box-shadow: 0 8px 20px rgba(255,77,109,0.3); transition: transform .15s ease;
+    }
+    .btn:hover{transform: translateY(-2px)}
+    .container{max-width:1000px; margin:0 auto; padding: 30px 16px}
+    section{background: var(--light); border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,.06); margin: 22px 0; padding: 22px}
+    h2{margin:8px 0 18px; color: var(--primary); font-size: clamp(22px, 4vw, 30px)}
+    .flex{display:flex; gap:16px; flex-wrap: wrap}
+    .card{
+      flex:1 1 280px; background: #fff; border:1px solid #f7ccd6; border-radius:12px; padding:16px;
+    }
+    .tag{display:inline-block; background:#ffe6ee; color:var(--primary); font-weight:600; padding:4px 10px; border-radius:999px; font-size:12px}
+    /* Timeline */
+    .timeline{position:relative; padding-left:28px}
+    .timeline::before{
+      content:""; position:absolute; left:12px; top:0; bottom:0; width:3px; background:#ffd3de;
+      border-radius:2px;
+    }
+    .event{
+      position:relative; margin:18px 0; padding:12px 12px 12px 22px; background:#fff; border:1px solid #f7ccd6; border-radius:10px;
+      transition: transform .15s ease;
+    }
+    .event:hover{transform: translateX(3px)}
+    .event::before{
+      content:""; position:absolute; left:-20px; top:14px; width:12px; height:12px; background: var(--primary);
+      border:3px solid #fff; border-radius:50%; box-shadow:0 0 0 2px #ffd3de;
+    }
+    /* Gallery */
+    .gallery{
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:12px;
+    }
+    .gallery .img-wrap{ position:relative; overflow:hidden; border-radius:12px; }
+    .gallery img{
+      width:100%; height:180px; object-fit:cover; display:block; border-radius:12px; border:1px solid #f7ccd6;
+      transition: transform .18s ease, box-shadow .18s ease; cursor: pointer; display:block;
+    }
+    /* Purple glow on hover */
+    .gallery .img-wrap:hover img{
+      transform: scale(1.03);
+      box-shadow: 0 18px 40px rgba(184,77,255,0.18), 0 0 28px rgba(184,77,255,0.12);
+      border-color: rgba(184,77,255,0.35);
+    }
+
+    /* Caption appears only when the image has been clicked (selected) and hovered */
+    .gallery .caption{
+      position:absolute; left:12px; right:12px; bottom:12px; padding:8px 12px; border-radius:8px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.92), rgba(255,255,255,0.82));
+      color:var(--dark); font-weight:600; font-size:14px; opacity:0; transform: translateY(6px);
+      transition: opacity .16s ease, transform .16s ease; pointer-events:none;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+    .gallery .img-wrap.selected:hover .caption{ opacity:1; transform: translateY(0); pointer-events:auto }
+
+    /* Lightbox / full-view image */
+    .lightbox{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      background: rgba(0,0,0,0.85); z-index:9999; opacity:0; pointer-events:none; transition: opacity .18s ease;
+    }
+    .lightbox.visible{ opacity:1; pointer-events:auto }
+    .lightbox img{ max-width:92%; max-height:92%; border-radius:10px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    .lightbox .close-lightbox{
+      position: absolute; top:18px; right:18px; background: rgba(255,255,255,0.95); color: var(--primary);
+      border: none; padding:8px 12px; border-radius:999px; font-weight:700; cursor:pointer;
+    }
+    .lightbox .lb-caption{
+      position: absolute; left:50%; transform: translateX(-50%); bottom:28px; max-width:88%;
+      background: rgba(255,255,255,0.96); color: var(--dark); padding:10px 14px; border-radius:10px;
+      font-weight:700; box-shadow: 0 10px 26px rgba(0,0,0,0.18); text-align:center; z-index:10000;
+    }
+    /* Love notes */
+    .notes{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px}
+    .note{
+      background:#fff6fa; border:1px dashed #f7ccd6; border-radius:12px; padding:14px; min-height:120px; position:relative;
+    }
+    .note .reveal{margin-top:8px}
+    /* Quiz (removed) */
+    .result{font-weight:700; color: var(--primary); margin-top:10px}
+    /* Audio controls */
+    .audio-wrap{
+      display:flex; align-items:center; gap:10px; background:#fff; padding:12px; border:1px solid #f7ccd6; border-radius:10px;
+    }
+    /* Footer */
+    footer{
+      text-align:center; padding:26px; color:#777;
+    }
+    /* Heart float animation */
+    .heart{
+      position:absolute; font-size:20px; animation: floatUp 3.5s linear forwards; opacity:.9;
+    }
+    @keyframes floatUp{
+      0%{transform: translateY(0) scale(1); opacity:.9}
+      100%{transform: translateY(-180px) scale(1.6); opacity:0}
+    }
+    /* Confetti */
+    canvas#confetti{position:fixed; inset:0; pointer-events:none}
+    /* Responsive tweaks */
+    @media (max-width:480px){
+      .audio-wrap{flex-direction:column; align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+
+  <header>
+    <h1 class="hero-title">For My Amazing Girlfriend 💕 Amogelang Alexandra Maubane</h1>
+    <p class="hero-sub">A tiny corner of the web to celebrate you, and everything you do.</p>
+    <a class="btn" href="#notes" id="startBtn">Start the surprises</a>
+  </header>
+
+  <div class="container">
+
+    <!-- Audio -->
+    <section aria-labelledby="music">
+      <h2 id="music">Your song</h2>
+      <div class="audio-wrap">
+        <span class="tag">TEEKS - Oil & Water</span>
+        <audio id="bgAudio" controls>
+          
+          <source src="TEEKS - Oil & Water.mp3" type="audio/mpeg"/>
+          Your browser does not support audio playback.
+        </audio>
+        <button class="btn" id="toggleAudio">Play/Pause</button>
+      </div>
+    </section>
+
+    <!-- Lightbox for full-view images -->
+    <div id="lightbox" class="lightbox" tabindex="-1" aria-hidden="true">
+      <img src="" alt="Full view" />
+      <div class="lb-caption" id="lightboxCaption"></div>
+      <button class="close-lightbox" id="closeLightbox">Close</button>
+    </div>
+
+    <!-- Timeline -->
+    <section aria-labelledby="timeline">
+      <h2 id="timeline">Our memory timeline</h2>
+      <div class="timeline" id="timelineList">
+        <div class="event">
+          <div class="tag">Day 1</div>
+          <p>I saw you. Everything has been brighter since.</br> Who knew this was the start of something beautiful?</p>
+        </div>
+        <div class="event">
+          <div class="tag">First Date</div>
+          <p>Has to be my favourite day of the year because that</br> was the day i got the best person officially in my life.</p>
+        </div>
+        <div class="event">
+          <div class="tag">Milestone</div>
+          <p>You showed up for me when it mattered — I’ll never forget it.</br>Our 1 year anniversary was unforgettable. Everything was just perfect </br>with sleeping and waking up next to you.</p>
+        </div>
+        <div class="event">
+          <div class="tag">Fun Moments</div>
+          <p>This we did one of the most unexped things and i have you to thank for.</br>To make it more clear im speaking about us visiting the guest house.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Love notes -->
+    <section aria-labelledby="notes">
+      <h2 id="notes">love notes</h2>
+      <div class="notes">
+        <div class="note">
+          <p>Click to reveal a reason I appreciate you:</p>
+          <button class="btn reveal" data-note-index="0">Reveal</button>
+          <div class="note-text"></div>
+        </div>
+        <div class="note">
+          <p>Click to reveal another:</p>
+          <button class="btn reveal" data-note-index="1">Reveal</button>
+          <div class="note-text"></div>
+        </div>
+        <div class="note">
+          <p>One more surprise:</p>
+          <button class="btn reveal" data-note-index="2">Reveal</button>
+          <div class="note-text"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Random appreciation generator -->
+    <section aria-labelledby="appreciation">
+      <h2 id="appreciation">Random appreciation generator</h2>
+      <div class="flex">
+        <div class="card">
+          <p>Press the button for a new message.</p>
+          <button class="btn" id="randomBtn">Show appreciation</button>
+          <p class="result" id="randomMsg"></p>
+        </div>
+        <div class="card">
+          <p>Want fireworks? Celebrate with confetti!</p>
+          <button class="btn" id="confettiBtn">Launch confetti 🎉</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery -->
+    <section aria-labelledby="gallery">
+      <h2 id="gallery">Gallery of our moments</h2>
+      <div class="gallery">
+        <!-- Replace src with your images (e.g., imgs/photo1.jpg) -->
+        <div class="img-wrap">
+          <img src="first.jpg" alt="This photo was after the first event we had of peer education and we were waiting for my bus to arrive"/>
+          <div class="caption"></div>
+        </div>
+        <div class="img-wrap">
+          <img src="2025.jpg" alt="This photo taken during the 2025 year end function we had"/>
+          <div class="caption"></div>
+        </div>
+        <div class="img-wrap">
+          <img src="2024.jpg" alt="This photo taken during the 2024 year end function we had"/>
+          <div class="caption"></div>
+        </div>
+        <div class="img-wrap">
+          <img src="grass.jpg" alt="After you and i came from the guest we chilled a little in the grass just bonding"/>
+          <div class="caption"></div>
+        </div>
+        <div class="img-wrap">
+          <img src="carpet.jpg" alt="This photo was taken on the red carpet of the 2025 year end function"/>
+          <div class="caption"></div>
+        </div>
+        <div class="img-wrap">
+          <img src="clothes.jpg" alt="This photo was taken when i forced you to try on that 2 piece"/>
+          <div class="caption"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiz removed -->
+
+  </div>
+
+  <footer>
+    Made with love by Reaoleboga 💗
+  </footer>
+
+  <script>
+    // Appreciation messages & notes — personalize these
+    const appreciationMessages = [
+      "You turn ordinary days into something special.",
+      "Thank you for believing in me — always.",
+      "Your kindness changes the atmosphere everywhere we go.",
+      "I’m better because of you.",
+      "You show up, and it means the world to me.",
+      "Your smile is my favorite view."
+    ];
+    const noteSets = [
+      ["You’re my safe place.", "You listen deeply.", "You make me laugh when I need it most."],
+      ["You’re thoughtful in a million tiny ways.", "You celebrate my wins.", "You hold me steady in the tough days."],
+      ["You inspire me to be my best.", "You’re the heartbeat of my favorite memories.", "I appreciate you more than words."]
+    ];
+
+    // Hero: floating hearts on start
+    const startBtn = document.getElementById('startBtn');
+    startBtn.addEventListener('click', (e)=> {
+      spawnHearts(12);
+    });
+
+    // Audio controls
+    const audio = document.getElementById('bgAudio');
+    document.getElementById('toggleAudio').addEventListener('click', ()=>{
+      if(audio.paused){ audio.play(); } else { audio.pause(); }
+    });
+
+    // Love note reveal buttons
+    document.querySelectorAll('.reveal').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const idx = Number(btn.dataset.noteIndex);
+        const arr = noteSets[idx];
+        const el = btn.nextElementSibling;
+        const next = arr.shift(); // rotate
+        arr.push(next);
+        el.textContent = next;
+        spawnHearts(4);
+      });
+    });
+
+    // Random appreciation generator
+    document.getElementById('randomBtn').addEventListener('click', ()=>{
+      const i = Math.floor(Math.random() * appreciationMessages.length);
+      document.getElementById('randomMsg').textContent = appreciationMessages[i];
+      spawnHearts(6);
+    });
+
+    // Simple confetti
+    const confettiCanvas = document.getElementById('confetti');
+    const ctx = confettiCanvas.getContext('2d');
+    let confettiPieces = [];
+    function resizeCanvas(){
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    document.getElementById('confettiBtn').addEventListener('click', ()=>{
+      launchConfetti();
+    });
+
+    function launchConfetti(){
+      confettiPieces = [];
+      for(let i=0;i<160;i++){
+        confettiPieces.push({
+          x: Math.random()*confettiCanvas.width,
+          y: -10 - Math.random()*200,
+          r: 3+Math.random()*4,
+          c: randomColor(),
+          vx: -1 + Math.random()*2,
+          vy: 2 + Math.random()*3,
+          a: Math.random()*Math.PI*2
+        });
+      }
+      animateConfetti();
+      setTimeout(()=> confettiPieces = [], 2500);
+    }
+    function animateConfetti(){
+      ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+      confettiPieces.forEach(p=>{
+        p.x += p.vx; p.y += p.vy; p.a += 0.05;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.a);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.r, -p.r, p.r*2, p.r*2);
+        ctx.restore();
+      });
+      if(confettiPieces.length) requestAnimationFrame(animateConfetti);
+    }
+    function randomColor(){
+      const colors = ["#ff4d6d","#ffa6c1","#ffd3de","#ff8fab","#ff5d8f","#ffcad4"];
+      return colors[Math.floor(Math.random()*colors.length)];
+    }
+
+    // Floating hearts
+    function spawnHearts(n=6){
+      for(let i=0;i<n;i++){
+        const h = document.createElement('div');
+        h.className = 'heart';
+        h.textContent = '💗';
+        const x = Math.random() * window.innerWidth;
+        const y = window.scrollY + (window.innerHeight*0.75);
+        h.style.left = x + 'px';
+        h.style.top = y + 'px';
+        h.style.animationDuration = (2.8 + Math.random()*1.2) + 's';
+        document.body.appendChild(h);
+        setTimeout(()=> h.remove(), 3500);
+      }
+    }
+
+    // Quiz logic removed
+
+    // Optional: auto-scroll from hero button
+    startBtn.addEventListener('click', (e)=>{
+      const target = document.getElementById('notes');
+      if(target){
+        setTimeout(()=> target.scrollIntoView({behavior:'smooth'}), 200);
+      }
+    });
+
+    // Lightbox: open gallery images in full view when clicked
+    (function(){
+      const lightbox = document.getElementById('lightbox');
+      if(!lightbox) return;
+      const lbImg = lightbox.querySelector('img');
+      const lbCaption = lightbox.querySelector('#lightboxCaption');
+      const closeBtn = document.getElementById('closeLightbox');
+
+      function open(img){
+        lbImg.src = img.src;
+        lbImg.alt = img.alt || '';
+        if(lbCaption) lbCaption.textContent = img.alt || '';
+        lightbox.classList.add('visible');
+        lightbox.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden';
+        // focus for accessibility so Escape works immediately
+        lightbox.focus();
+      }
+      function close(){
+        lightbox.classList.remove('visible');
+        lightbox.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+        if(lbCaption) lbCaption.textContent = '';
+        setTimeout(()=> lbImg.src = '', 220);
+      }
+
+      // populate captions and add selection + open behavior
+      document.querySelectorAll('.gallery img').forEach(img => {
+        const wrap = img.closest('.img-wrap');
+        const capEl = wrap ? wrap.querySelector('.caption') : null;
+        if(capEl) capEl.textContent = img.alt || '';
+
+        img.addEventListener('click', (ev)=>{
+          ev.stopPropagation();
+          // toggle selected state for caption-on-hover
+          if(wrap){
+            const wasSelected = wrap.classList.contains('selected');
+            document.querySelectorAll('.img-wrap.selected').forEach(w => w.classList.remove('selected'));
+            if(!wasSelected) wrap.classList.add('selected');
+          }
+          open(img);
+        });
+      });
+
+      // clicking outside gallery clears selections
+      document.addEventListener('click', (ev)=>{
+        if(!ev.target.closest('.img-wrap')){
+          document.querySelectorAll('.img-wrap.selected').forEach(w => w.classList.remove('selected'));
+        }
+      });
+
+      closeBtn.addEventListener('click', close);
+
+      // Click outside image closes
+      lightbox.addEventListener('click', (ev)=>{
+        if(ev.target === lightbox) close();
+      });
+
+      // Escape closes
+      document.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Escape' && lightbox.classList.contains('visible')) close();
+      });
+    })();
+  </script>
+</body>
+</html>
